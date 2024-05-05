@@ -9,7 +9,7 @@ import java.util.Stack;
 public final class  GameModel {
 
     private static final GameModel INSTANCE = new GameModel();
-     private  ArrayList<CardStack> card_Stacks ;//存放桌面上的所有牌堆
+    private  ArrayList<CardStack> card_Stacks ;//存放桌面上的所有牌堆
     private  ArrayList<CardStack> regret_stack ;
     private Stack<ArrayList> listStack = new Stack<ArrayList>();
     private int fromIndex;
@@ -31,7 +31,7 @@ public final class  GameModel {
     public void init()
     {
         this.regret_stack = new ArrayList<CardStack>();
-        this.table_Stacks = new  TableStack[7];
+        this.table_Stacks = new TableStack[7];
         for(int i = 0 ; i < table_Stacks.length ; i++)
     {
         this.table_Stacks[i] = new TableStack();
@@ -128,6 +128,10 @@ public final class  GameModel {
         }
 
     }
+
+    /**
+     * 保存当前的牌堆
+     */
     public void store()
     {
         this.regret_stack = new ArrayList<CardStack>();
@@ -386,6 +390,8 @@ public final class  GameModel {
        }
         return null;
     }
+
+    //通过字符串获取卡牌，字符串形如"0;1;2;3;4;5;6;7;8;9;10;11;12"
     public Card getTop(String result)
     {
         if( result != null && result.length() > 0)
@@ -401,6 +407,7 @@ public final class  GameModel {
         }
         return null;
     }
+    //
     public String serialize(Card pCard, int aIndex)
     {
 
@@ -443,15 +450,19 @@ public final class  GameModel {
             ArrayList<Integer> flag = new ArrayList<Integer>();
             for (int i = 2 ; i<9 ; i++)
             {
+                //如果同一个牌堆，上次操作前和现在的不一样,说明有牌被移动
                 if(this.card_Stacks.get(i).size() != temp_list.get(i).size())
                 {
                     flag.add(i);
                 }
             }
+            //如果只有一个牌堆的大小不一样，说明只有一个牌堆的牌被移动
             if(flag.size() == 1)
             {
+                //如果这个牌堆的牌数比上次操作前的少，并且这个牌堆的牌数大于0，并且上次操作前的牌数大于1
                 if(this.card_Stacks.get(flag.get(0)).size() <temp_list.get(flag.get(0)).size() &&this.card_Stacks.get(flag.get(0)).size() >0 && temp_list.get(flag.get(0)).size() > 1)
                 {
+                    //如果这个牌堆自顶向下的第二张是正面朝上的，那么将这张牌设置为朝下
                     if(temp_list.get(flag.get(0)).peek(temp_list.get(flag.get(0)).size() - 2).isFaceUp())
                     {
                         temp_list.get(flag.get(0)).peek(temp_list.get(flag.get(0)).size()-2).setFaceUp(false);
@@ -461,9 +472,11 @@ public final class  GameModel {
             }
             if(flag.size() ==2)
             {
+                //如果这两个牌堆的牌差1，且是编号为0的牌堆比原来的多了，说明是从编号为1的牌堆移动到编号为0的牌堆
                 if(this.card_Stacks.get(flag.get(0)).size() -temp_list.get(flag.get(0)).size() == 1 )
                 {
-
+                    //如果编号为1的牌堆
+                    //那么将编号为1的牌堆的倒数第二张牌设置为朝下
                     temp_list.get(flag.get(1)).peek(temp_list.get(flag.get(1)).size()-2).setFaceUp(false);
 
                 }
@@ -487,11 +500,12 @@ public final class  GameModel {
             }
 
 
-
+            //将现在的所有牌堆清空
             for(int i = 0 ; i< 13 ; i++)
             {
                 this.card_Stacks.get(i).clear();
             }
+            //将上次操作前的牌堆放入现在的牌堆
             for(int i = 0 ; i< 13 ; i++)
             {
                 for(int j = 0 ; j <temp_list.get(i).size() ; j++)
@@ -500,6 +514,7 @@ public final class  GameModel {
                     this.card_Stacks.get(i).init(temp_list.get(i).peek(j));
                 }
             }
+            //更新桌面
             notifyListeners();
         }
         else

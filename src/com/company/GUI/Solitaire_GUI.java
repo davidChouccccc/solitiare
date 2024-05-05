@@ -32,6 +32,7 @@ public class Solitaire_GUI extends Application {
     private SuitPileView[] aSuitStacks = new SuitPileView[Suit.values().length];//花色堆
     private TablePileView[] aStacks = new TablePileView[TablePile.values().length]; //初始化玩牌区的数
     public static void main(String[] args) {
+
         launch(args);
     }
     public void start(Stage pPrimaryStage)//启动函数

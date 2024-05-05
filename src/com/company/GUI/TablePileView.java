@@ -30,6 +30,8 @@ public class TablePileView extends StackPane implements GameModelListener
         GameModel.instance().addListener(this);
 
     }
+
+
     private void buildLayout()
     {
         getChildren().clear();
@@ -46,8 +48,8 @@ public class TablePileView extends StackPane implements GameModelListener
             Card cardView = stack.peek(i);
             if(cardView.isFaceUp() == true)
             { final ImageView image = new ImageView(CardImages.getCard(cardView));
-                image.setTranslateY(Y_OFFSET * i);
-                getChildren().add(image);
+                image.setTranslateY(Y_OFFSET * i);//根据i值设置Y轴的偏移量
+                getChildren().add(image);//将image添加到getChildren()中，getChildren()是一个ObservableList<Node>类型的对象，可以添加任何Node类型的对象。
                 setOnDragOver(createDragOverHandler(image, cardView));//当你拖动到目标上方的时候，会不停的执行。
                 setOnDragEntered(createDragEnteredHandler(image, cardView));// 当你拖动到目标控件的时候，会执行这个事件回调。
                 setOnDragExited(createDragExitedHandler(image, cardView));//当你拖动移出目标控件的时候，执行这个操作。
@@ -93,14 +95,17 @@ public class TablePileView extends StackPane implements GameModelListener
             @Override
             public void handle(DragEvent pEvent)
             {
+                // 如果拖动源不是当前的ImageView并且拖动板上有字符串
                 if(pEvent.getGestureSource() != pImageView && pEvent.getDragboard().hasString())
                 {
-
+                    // 如果是合法移动
                     if( GameModel.instance().isLegalMove(GameModel.instance().getTop(pEvent.getDragboard().getString()), aIndex) )
                     {
+                        // 接受移动
                         pEvent.acceptTransferModes(TransferMode.MOVE);
                     }
                 }
+                // 消耗事件
                 pEvent.consume();
             }
         };
@@ -116,6 +121,7 @@ public class TablePileView extends StackPane implements GameModelListener
             {
                 if( GameModel.instance().isLegalMove(GameModel.instance().getTop(pEvent.getDragboard().getString()), aIndex) )
                 {
+                    // 设置阴影
                     pImageView.setEffect(new DropShadow());
 
 
@@ -133,6 +139,7 @@ public class TablePileView extends StackPane implements GameModelListener
             @Override
             public void handle(DragEvent pEvent)
             {
+                // 移除阴影
                 pImageView.setEffect(null);
                 pEvent.consume();
             }
@@ -152,7 +159,7 @@ public class TablePileView extends StackPane implements GameModelListener
                 if(db.hasString())
                 {
                     GameModel.instance().store();
-                   boolean a =  GameModel.instance().moveCard(GameModel.instance().StringToStack(db.getString()), aIndex);
+                    boolean a = GameModel.instance().moveCard(GameModel.instance().StringToStack(db.getString()), aIndex);
                     System.out.println(a);
                     success = true;
                     ClipboardContent content = new ClipboardContent();
